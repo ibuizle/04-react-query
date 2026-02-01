@@ -10,7 +10,6 @@ import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import MovieModal from '../MovieModal/MovieModal';
 
 import { fetchMovies } from '../../services/movieService';
-// ВИПРАВЛЕННЯ 1: Використовуємо 'import type' для імпорту інтерфейсів
 import type { Movie, MoviesResponse } from '../../types/movie';
 
 import css from './App.module.css';
@@ -24,7 +23,6 @@ const App: React.FC = () => {
     queryKey: ['movies', query, page],
     queryFn: () => fetchMovies(query, page),
     enabled: query.trim() !== '',
-    // ВИПРАВЛЕННЯ 2: keepPreviousData для v5 передається ось так
     placeholderData: keepPreviousData, 
   });
 
@@ -39,7 +37,6 @@ const App: React.FC = () => {
       return;
     }
     
-    // Уникнення повторного пошуку того ж самого запиту
     if (trimmed !== query) {
       setQuery(trimmed);
       setPage(1);
@@ -55,7 +52,6 @@ const App: React.FC = () => {
     setSelectedMovie(null);
   };
 
-  // Виправлення логіки toast (щоб не викликати під час рендеру)
   useEffect(() => {
     if (!isLoading && !isError && movies.length === 0 && query) {
       toast.error('No movies found for your request.');
