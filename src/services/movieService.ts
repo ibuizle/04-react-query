@@ -1,30 +1,36 @@
 import axios from 'axios';
 import type { Movie } from '../types/movie';
 
-interface TMDBSearchResponse {
+export interface TMDBSearchResponse {
+  page: number;
   results: Movie[];
+  total_pages: number;
+  total_results: number;
 }
 
 const BASE_URL = 'https://api.themoviedb.org/3/search/movie';
 
-export async function fetchMovies(query: string): Promise<Movie[]> {
-  const token = import.meta.env.VITE_TMDB_TOKEN as string;
+const token = import.meta.env.VITE_TMDB_TOKEN as string;
 
-  if (!token) {
-    throw new Error('VITE_TMDB_TOKEN is missing. Add it to .env / Vercel env.');
-  }
+if (!token) {
+  throw new Error('VITE_TMDB_TOKEN is missing. Add it to .env / Vercel env.');
+}
 
+export async function fetchMovies(
+  query: string,
+  page: number,
+): Promise<TMDBSearchResponse> {
   const response = await axios.get<TMDBSearchResponse>(BASE_URL, {
     params: {
       query,
+      page,
       include_adult: false,
       language: 'en-US',
-      page: 1,
     },
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  return response.data.results;
+  return response.data;
 }
