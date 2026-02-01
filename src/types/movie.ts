@@ -4,8 +4,8 @@ export interface Movie {
   poster_path: string | null;
   overview: string;
   release_date: string;
-  vote_average?: number; // Додано знак питання (необов'язкове поле)
-  backdrop_path?: string; // Додано знак питання
+  vote_average?: number; 
+  backdrop_path?: string; 
 }
 
 export interface MoviesResponse {
