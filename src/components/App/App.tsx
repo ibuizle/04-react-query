@@ -16,18 +16,23 @@ import type { Movie } from '../../types/movie';
 
 import css from './App.module.css';
 
-
 const App: React.FC = () => {
   const [query, setQuery] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [previousData, setPreviousData] = useState<MoviesResponse | undefined>(undefined);
 
-  // Використовуємо UseQueryResult з правильним типом
   const { data, isLoading, isError }: UseQueryResult<MoviesResponse, Error> = useQuery({
     queryKey: ['movies', query, page],
     queryFn: () => fetchMovies(query, page),
     enabled: query.trim() !== '',
+    placeholderData: previousData, // використовуємо попередні дані для безшовної пагінації
   });
+
+  // зберігаємо попередні дані при завантаженні нових
+  useEffect(() => {
+    if (data) setPreviousData(data);
+  }, [data]);
 
   const movies: Movie[] = data?.results ?? [];
   const totalPages: number = data?.total_pages ?? 0;
@@ -43,6 +48,7 @@ const App: React.FC = () => {
       setQuery(trimmed);
       setPage(1);
       setSelectedMovie(null);
+      setPreviousData(undefined); // очищаємо попередні дані при новому пошуку
     }
   };
 
